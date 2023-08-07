@@ -1,0 +1,17 @@
+### Kamély LUMIÈRE###
+###19th July 20223###
+### To have qualimap output after the mapping###
+
+After having the bam file from the mapping on Neo, we have to run qualimap but the input should have been sorted and we need only reads which map.
+
+Run successively the 3 command lines on neo/genotoul or via a script on neo/genotoul (run_qm_s1_GXXX.sh, run_qm_s2_GXXX.sh and run_qm_s3_GXXX.sh):
+
+
+samtools view -F 4  -b nonrRNA.GXXX.bam > GXXX_mp.bam
+
+samtools sort GXXX_mp.bam -o GXXX_mp_s.bam
+
+
+qualimap bamqc -bam GXXX_mp_s.bam -outdir qualimap_results_GXXX
+
+The output genome_results.txt in the folder qualimap_results can be used for the PCA after.
