@@ -1,0 +1,61 @@
+---
+title: "TEsorter_Metazo_final"
+author: "Kamély Lumière"
+date: "14/06/2023"
+output: html_document
+---
+
+
+
+```{r}
+
+
+library(ggplot2)
+
+data_ts <- read.table(file ="C:/Users/Anne-Flore/Desktop/TESORTER_FINAL/t1a22.txt", header = TRUE,fill = TRUE); data_ts
+
+data_ts<-data.frame(data_ts); data_ts
+```
+
+
+
+
+```{r}
+table(data_ts$class)
+```
+
+
+
+```{r}
+plot(table(data_ts$class), xlab="Distribution of the class of the annotation of Tesorter", ylab="Number of sequences")
+```
+```{r}
+ggplot(data_ts, aes(x = ids, fill = class))  +
+  geom_bar() +
+  xlab("IDs") +
+  ylab("Count") 
+```
+```{r}
+
+table(data_ts$class)
+ggplot(data=subset(data_ts,!is.na(data_ts$class)), aes(x=class, fill=class))+
+  geom_bar() +
+  labs(y="Number of TEs predictions", x="Class", title= " Distribution of class  of TEs predictions in the annotation by TESorter") 
+```
+
+## partie II de TEsorter fichier .cls
+
+
+```{r}
+data_ts2 <- read.table(file ="C:/Users/Anne-Flore/Desktop/TESORTER_FINAL/u1a22.txt", header = TRUE,fill = TRUE); data_ts2
+data_ts2<-data.frame(data_ts2)
+```
+
+```{r}
+ggplot(data=subset(data_ts2,!is.na(data_ts2$order)), aes(x=order, fill=superfamily))+
+  geom_bar() +
+  labs(y="Number of TEs predictions", x="Order", title= " Distribution of order and superfamily of TEs predictions in the annotation by TEsorter")
+
+table(data_ts2$superfamily)
+```
+
