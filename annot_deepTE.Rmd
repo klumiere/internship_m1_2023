@@ -1,0 +1,51 @@
+---
+title: "DeepTE_annotation"
+author: "Kamély Lumière"
+date: "13/06/2023"
+output: html_document
+---
+
+
+
+```{r}
+library(ggplot2)
+
+data_dte <- read.table(file ="C:/Users/Anne-Flore/Desktop/deepTE/1a22.txt", header = TRUE,fill = TRUE); data_dte 
+length(data_dte)
+```
+
+
+
+```{r}
+
+data_dte<-data.frame(data_dte);data_dte
+summary(data_dte)
+```
+
+
+
+```{r}
+
+table(data_dte$class)
+length(data_dte$class)
+ggplot(data=subset(data_dte,!is.na(data_dte$class)), aes(x=class, fill=order))+
+  geom_bar() +
+  labs(y="Number of TEs predictions", x="Class", title= " Distribution of class and order of TEs predictions in the annotation by DeepTE") 
+```
+
+
+
+```{r}
+table(data_dte$family)
+ggplot(data=subset(data_dte,!is.na(data_dte$order)), aes(x=order, fill=family))+
+  geom_bar() +
+  labs(y="Number od TEs predictions", x="Order", title= " Distribution of order and family of TEs predictions in the annotation by DeepTE")
+```
+```{r}
+
+table(data_dte$superfamily)
+ggplot(data=subset(data_dte,!is.na(data_dte$family)), aes(x=family, fill=superfamily))+
+  geom_bar() +
+  labs(y="Number of TEs predictions", x="Family", title= " Distribution of family and superfamily of TEs predictions in the annotation by DeepTE")
+```
+
