@@ -1,0 +1,226 @@
+---
+title: "Analysis of the distribution of predictions of the db aphid_TE_db_G0.db and aphid_TE_db_G1.db length"
+output: html_document
+author: "Kamély Lumière"
+---
+
+
+
+# Import ggplot library for tracing plots (option)
+
+```{r}
+library(ggplot2)
+```
+
+
+
+# Import the file list-length-G0.fa and the file list-length-G1.fa (Célia's files) which contains the length of all prediction of these db and their ids
+```{r }
+
+data_G0 <- read.table(file ="C:/Users/Anne-Flore/Desktop/klumiere/list-length_G0.txt", header = TRUE) #read the file from the path in our computer
+#head(data_G0,5)
+dim(data_G0)#dim de data_G0--> 106872 rows (each seq of TE) and 2 columns (id/length)
+
+
+data_G1 <- read.table(file ="C:/Users/Anne-Flore/Desktop/klumiere/list-length_G1.txt", header = TRUE)
+head(data_G1)
+#head(data_G1)
+dim(data_G1)#dim de data_G1--> 108481 rows (each seq of TE) and 2 columns (name=id/length)
+
+```
+
+
+# Extraction of all the values of length ( 2nd column of the file only) for each list of length of g0 et g1 with their ids (name)
+
+
+```{r}
+
+length_seq0<- data_G0[,2];  #list of all the length of the db_G0
+idf_seq0<-data_G0[,1]; #list of all the ids of the db_G1
+length(length_seq0)#verification of the total number od=f sequences-->106 872
+
+t<-unique(length_seq0); #to know how many different size is there in the db_G0:3946
+length(t)
+
+min(length_seq0) #minimal length in db_G0 = 76
+max(length_seq0) #maximal length in db_G0=214590
+
+
+#same commands for the db_G1
+length_seq1<- data_G1[,2]; 
+idf_seq1<-data_G1[,1]
+length(length_seq1)
+
+s<-unique(length_seq1);
+length(s)#3980 different size ind the db_G1
+
+min(length_seq1) #minimal length in db_G1= 76
+max(length_seq1) #maximal length in db_G1=214590
+
+
+#dataframe with id (1rst col) and their length (2nd col) for g0 (df0) for db_G0 and db_G1
+df0<-data.frame(idf_seq0,length_seq0);
+df1<-data.frame(idf_seq1,length_seq1);
+
+
+#to know how many sequences have a length<100 bp for each db
+df0$length_seq0[df0$length_seq0<100]
+df1$length_seq1[df1$length_seq1<100]
+
+#to know how many sequences have a length=100 bp for each db
+length(df0$length_seq0[df0$length_seq0==100])
+length(df1$length_seq1[df1$length_seq1==100])
+
+
+a<-table(length_seq0);a # to count for each size of the prediction in the db how many prediction have the size
+#tail(a,1000)
+
+
+
+
+```
+
+
+
+# Plot of the distribution of the length of the predictions in the db_G0 and db_G1
+
+
+```{r}
+
+p0<-plot(table(df0$length_seq0), xlab="Length of G0 database predictions in pb", ylab="Number of sequences");p0 ### Have not  a good shape 
+p1<-plot(table(df1$length_seq1), xlab="Length of G1 database predictions in pb", ylab="Number of sequences");p1
+
+#to have the main informations about these distributions
+summary(df0)
+summary(df1)
+
+
+#to get the ids of predictions with a length =148 pb in db_G0
+#df0$idf_seq0[df0$length_seq0==148] 
+
+```
+
+
+
+# Plot with intervals for db_G0
+
+```{r}
+
+#to create interval in the length of prediction of db_G0
+df0$length_seq0_i<-cut(df0$length_seq0,c(0,100,1000,10000,100000,300000),dig.lab = 10) #dig.lab => to remove the scientific writing and have the 0000...
+#df0$length_seq0_i
+
+summary(df0$length_seq0_i) #to show the main information about the distribution of length *with interval*
+
+#barplots of the distribution of the length of prediction in the db_G0
+bi0<-barplot(table(df0$length_seq0_i), xlab="Length of G0 database sequences in pb", ylab="Number of predictions");bi0 #display the barplot
+
+
+```
+
+# Plot with intervals for db_G1
+
+
+
+```{r}
+#to create interval in the length of prediction of db_G1
+df1$length_seq1_i<-cut(df1$length_seq1,c(0,100,1000,10000,100000, 200000),na.rm=TRUE,dig.lab = 10)
+#head(df1$length_seq1_i)
+summary(df1$length_seq1_i) #to show the main information about the distribution of length *with intervals*
+
+#barplots of the distribution of the length of prediction in the db_G0
+bi1<-barplot(table(df1$length_seq1_i), xlab="Length of G1 database sequences in pb", ylab="Number of predictions")
+
+
+```
+
+
+
+# Plot with more intervals to have a better idea of what is the distribution in the interval [100:1000] for db_G0
+
+
+```{r}
+
+df0$length_seq0_ii<-cut(df0$length_seq0,c(0,100,300,500,700,1000,3000,5000,10000,30000,70000,100000, 300000),na.rm=TRUE,dig.lab = 10) #we cut more 
+
+head(df0$length_seq0_i)
+bi00<-barplot(table(df0$length_seq0_ii), xlab="Length of G0 database sequences in pb", ylab="Number of sequences") #new barplot with more intervals
+
+summary(df0$length_seq0_ii) #to show the main information about the distribution of length *with more intervals*
+
+
+```
+
+
+# Plot with more intervals to have a better idea of what is the distribution in the interval [100:1000] for db_G1
+
+
+```{r}
+#same for db_G1
+df1$length_seq1_ii<-cut(df1$length_seq1,c(0,100,300,500,700,1000,3000,5000,10000,30000,70000,100000, 300000),na.rm=TRUE,dig.lab = 10)
+
+head(df1$length_seq1_i)
+bi11<-barplot(table(df1$length_seq1_ii), xlab="Length of G1 database sequences in pb", ylab="Number of sequences") #bi11 with more intervals bi1 with some intervals
+
+summary(df1$length_seq1_ii)
+
+
+```
+
+
+
+
+
+
+
+
+# To get one of the sequence with a length arround 40000 bp
+
+```{r}
+### /!\Quand j'ai fais mon 1er gg slides, dans les lignes en dessous j'avais mis seq0, df0 ... résultats surement à modifier... #### alors que s'occupe que de G1 à partir de là
+
+#get all length of seq with length>=40K
+plus_40k_length<-df1$length_seq1[df1$length_seq1 >= 40000]; plus_40k_length
+
+# get all the ids of seq with length >=40K
+plus_40k_idf<-df1$idf_seq1[df1$length_seq1 >= 40000]; plus_40k_idf
+
+#sort by ascending values of length of seq >=40K
+sort(plus_40k_length) #the smaller has a length of 43296 bp
+
+
+#I have chosen the seq with a length of 43296 bp which corresponds to "RDN_A037_612"
+pred_40k<-df1$idf_seq1[df1$length_seq1==43296];pred_40k # return the id with the length of 43 296 bp RDN_A037_612" 
+
+
+# for the seq with a length of 43330 bp--> idf="RDN_D091_281"
+pred2_40k<-df1$idf_seq1[df1$length_seq1==43330];pred2_40k
+
+
+```
+
+
+
+
+# To know which sequences corresponds to a value of length
+
+# The largest prediction
+```{r}
+
+df1$idf_seq1[df1$length_seq1==214590] #the value of 214 590 was known with the summary above --> the id of the largest prediction is "RDN_D067_35"
+
+```
+
+
+# Get some predictions (with their id + length) in order to make a blast+ RepeatMasker to see what it is
+
+
+```{r}
+b<-df1$idf_seq1[ df1$length_seq1>700 & df1$length_seq1<1000];b #get all ids with an length >700 and <1000
+b[500] #chose on among the liste--> the 500th--> The id returned is "RDN_A019_473"
+
+df1$length_seq1[ df1$idf_seq1=="RDN_A019_473"] # to get it's length-->980 bp
+
+```
+
+## End of this script
