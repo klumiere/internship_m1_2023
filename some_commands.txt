@@ -1,0 +1,40 @@
+##by Kamély LUMIÈRE##
+##20th July 2023##
+#Commands for the step of the checking od the db##
+###To make a blast in command line in Linux terminal###
+#install blast in terminal and then tape the next command lines
+#create a db from the file aphid_TE_db_G1.fa
+makeblastdb -in aphid_TE_db_G1.fa -parse_seqids -dbtype nucl -title bdd_aphid_TE_G1
+
+#make a blastn with all the TE predictions as queries and the sequence of referencce genome Buchnera as the subject
+blastn -db aphid_TE_db_G1.fa -query Buchnera_aphidicola.fa -out BLAST_mapping_Buchnera_vs_db_aphid_TE_G1.txt
+
+###To remove sequences in a multifasta file by their ids###
+
+#Method 1/ Step by step you remove ids from the db (cut all the ids in 5 files) --> to much ids to remove in one time
+awk 'BEGIN{while((getline<"ids1.txt")>0)l[">"$1]=1}/^>/{f=!l[$1]}f' aphid_TE_db_G1.fa > v1.fa
+awk 'BEGIN{while((getline<"ids2.txt")>0)l[">"$1]=1}/^>/{f=!l[$1]}f' v1.fa > v2.fa
+awk 'BEGIN{while((getline<"ids3.txt")>0)l[">"$1]=1}/^>/{f=!l[$1]}f' v2.fa > v3.fa
+awk 'BEGIN{while((getline<"ids4.txt")>0)l[">"$1]=1}/^>/{f=!l[$1]}f' v3.fa > v4.fa
+awk 'BEGIN{while((getline<"ids5.txt")>0)l[">"$1]=1}/^>/{f=!l[$1]}f' v4.fa > v5.fa
+#=> v5.fa contains the final database with the sequences we had to remove !
+
+
+#Method 2/ You remove all the sequence in the multifasta file with their id in a txt fil as input
+awk 'BEGIN{while((getline<"ids_to_remove.txt")>0)l[">"$1]=1}/^>/{f=!l[$1]}f' aphid_TE_db_G1.fa > aphid_TE_db_G1_rm500.fa
+
+#To check the number of sequences in a multifasta file
+grep ">" file_name.txt | wc -l
+
+#To count the legnth of each sequences in a multi fasta with a python script using biopython:
+
+#!/usr/bin/python
+from Bio import SeqIO
+import sys
+cmdargs = str(sys.argv)
+for seq_record in SeqIO.parse(str(sys.argv[1]), "fasta"):
+ output_line = '%s\t%i' % \
+(seq_record.id, len(seq_record))
+ print(output_line) 
+
+# => run in terminal: python3 script_count_length_rm500.py aphid_TE_db_G1_rm500.fa
