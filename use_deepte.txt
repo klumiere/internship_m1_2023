@@ -1,0 +1,90 @@
+## by Kamély LUMIÈRE##
+##19th July 2023##
+##How to use DeepTE to annotate a db##
+
+I cloned the repository of deepTE the run the script run_deep-te.sh with the input (DeepTE folder, s folder, DeepTE.py script and the aphid_TE_dbgr_$i.txt ) for each group (1..22)
+### folder deep_te###
+
+for each group of TE prediction (1..22) one folder (gr1..gr22)
+
+## folder opt_dte_22##
+
+contains all the output of DeepTE for each group (opt_DeepTE_gr$i.txt) but we have to change the format
+=> change RDN_A005_4	ClassI_LTR_BEL into RDN_A005_4	ClassI LTR BEL for the file for the annotation with an awk command:
+
+awk 'BEGIN{OFS="\t"} {gsub(/_/, " ", $2); print}' res_gr$i_deep_TE.txt > res_DeepTE_gr$i.txt
+
+All output res_DeepTE_gr$i.txt are in the folder res_fin_DeepTE.
+
+After that, from each file res_DeepTE_gr$i.txt, I put a pipe "|" between the ids, the class, the subclass, the superfamily... in order to have a header.
+
+I used these following awk commands (example for the group 1):
+
+1/ print all the headers with pipe beetween:
+awk '{print $1 "|"$2"|"$3"|"$4}' res_DeepTE_gr1.txt >1a.txt
+
+output:
+REX_D134_4276|ClassI|LTR||
+REX_D134_4280|ClassI|LTR|Copia|
+REX_D134_4289|ClassI|LTR|Gypsy|
+REX_D134_4302|ClassI|LTR||
+REX_D134_4304|ClassI|LTR|BEL|
+
+2/to remove the last caracter when it’s a pipe:
+
+sed 's/|$//' 1a.txt > 1b.txt
+
+output:
+REX_D134_4276|ClassI|LTR|
+REX_D134_4280|ClassI|LTR|Copia
+REX_D134_4289|ClassI|LTR|Gypsy
+REX_D134_4302|ClassI|LTR|
+REX_D134_4304|ClassI|LTR|BEL
+
+
+3/ remove the last caracter when it's a pipe:
+
+REX_D134_4276|ClassI|LTR
+REX_D134_4280|ClassI|LTR|Copia
+REX_D134_4289|ClassI|LTR|Gypsy
+REX_D134_4302|ClassI|LTR
+REX_D134_4304|ClassI|LTR|BEL
+
+
+###folder res_fin_dte and annot_dte###
+
+4/ to create a file with in the 1rst colum all the ids, the 2nd column the header with DeepTE (dte) annotation:
+
+paste -d ' ' f1.txt f2.txt > merged_file.txt
+
+
+inputs:
+dte_1.txt:
+REX_D134_4276|ClassI|LTR
+REX_D134_4280|ClassI|LTR|Copia
+REX_D134_4289|ClassI|LTR|Gypsy
+REX_D134_4302|ClassI|LTR
+REX_D134_4304|ClassI|LTR|BEL
+
+ids_gr1.txt:
+REX_D134_4276
+REX_D134_4280
+REX_D134_4289
+REX_D134_4302
+REX_D134_4304
+
+output:
+m_dte1.txt
+REX_D134_4276 REX_D134_4276|ClassI|LTR
+REX_D134_4280 REX_D134_4280|ClassI|LTR|Copia
+REX_D134_4289 REX_D134_4289|ClassI|LTR|Gypsy
+REX_D134_4302 REX_D134_4302|ClassI|LTR
+REX_D134_4304 REX_D134_4304|ClassI|LTR|BEL*
+
+I did for the 22 group then concatenate all the output files in one file m1a22.txt 
+
+Then, I run this command with seqkit in linux terminal in order to replace all the old header from the file aphid_TE_db_rm500.fa and replace them by the new headers in the file m1a22.txt:
+
+seqkit replace -p "(\S+)" --replacement "{kv}" --kv-file m1a22.txt aphid_TE_db_rm500.fa > aphid_TE_db_annot_dte.fa
+
+
