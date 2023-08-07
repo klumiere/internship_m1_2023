@@ -1,0 +1,55 @@
+---
+title: "PASTEC annotation"
+author: "Kamély Lumière"
+date: "13/06/2023"
+output: html_document
+---
+
+
+```{r}
+library(ggplot2)
+
+
+
+data_new_pastec <- read.table(file ="C:/Users/Anne-Flore/Desktop/new_pastec/1a22p.txt", header = TRUE); data_new_pastec 
+length(data_new_pastec$class)
+data_new_pastec<-data.frame(data_new_pastec);data_new_pastec
+```
+#plot for class and order
+
+```{r}
+table(data_new_pastec$class)
+table(data_new_pastec$order)
+table(data_new_pastec$family)
+
+ggplot(data=subset(data_new_pastec,!is.na(data_new_pastec$class)), aes(x=class, fill=order))+
+  geom_bar() +
+  labs(y="Number od TEs predictions", x="Class", title= " Distribution of class and order of TEs predictions in the annotation by PASTEC") 
+```
+
+
+#Plot for order and family
+
+
+```{r}
+ggplot(data=subset(data_new_pastec,!is.na(data_new_pastec$order)), aes(x=order, fill=family))+
+  geom_bar() +
+  labs(y="Number od TEs predictions", x="Class", title= " Distribution of order and family of TEs predictions in the annotation by PASTEC") 
+
+table(data_new_pastec$order)
+```
+
+
+
+```{r}
+table(data_new_pastec$family)
+```
+
+
+```{r}
+ggplot(data=subset(data_new_pastec,!is.na(data_new_pastec$order)), aes(x=order, fill=family))+
+  geom_bar() +
+  labs(y="Number od TEs predictions", x="Order", title= " Distribution of order and superfamily of TEs predictions in the annotation by PASTEC") 
+
+```
+
