@@ -1,6 +1,6 @@
-##stage_m2_2023##
+##stage_m1_2023##
 
-The repository stage_M2_2023 contains all the scripts I created and used durin my M2's internship.
+The repository stage_M1_2023 contains all the scripts I created and used durin my M1's internship.
 It is composed with 7 folders corresponding to one step of the pipeline I was working on.
 
 
